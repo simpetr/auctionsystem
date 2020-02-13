@@ -37,7 +37,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
 
     public boolean createAuction(String _auction_name, Date _end_time, double _reserved_price, String _description) {
         try {
-            if (_reserved_price < 0 || _end_time.before(new Date())) return false;
+            if (_reserved_price <= 0 || _end_time.before(new Date())) return false;
             FutureGet futureGet = dht.get(Number160.createHash(_auction_name)).start();
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
@@ -52,7 +52,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
 
     public boolean createAuctionWithBuyNowOption(String _auction_name, Date _end_time, double _reserved_price, String _description, double _buyNowPrice) {
         try {
-            if (_reserved_price < 0 || _end_time.before(new Date()) || _buyNowPrice <= _reserved_price) return false;
+            if (_reserved_price <= 0 || _end_time.before(new Date()) || _buyNowPrice <= _reserved_price) return false;
             FutureGet futureGet = dht.get(Number160.createHash(_auction_name)).start();
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
