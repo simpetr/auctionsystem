@@ -1,5 +1,5 @@
 import edu.ds.AuctionMechanismImpl;
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -8,16 +8,16 @@ import java.util.Date;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class AuctionMechanismTest extends TestCase {
+public class AuctionMechanismTest {
 
     private AuctionMechanismImpl peer0, peer1, peer2, peer3;
 
     @Test
-    public void TestList() throws Exception {
+    public void List() throws Exception {
         peer0 = new AuctionMechanismImpl(0, "127.0.0.1");
-        peer1 = new AuctionMechanismImpl(0, "127.0.0.1");
-        peer2 = new AuctionMechanismImpl(0, "127.0.0.1");
-        peer3 = new AuctionMechanismImpl(0, "127.0.0.1");
+        peer1 = new AuctionMechanismImpl(1, "127.0.0.1");
+        peer2 = new AuctionMechanismImpl(2, "127.0.0.1");
+        peer3 = new AuctionMechanismImpl(3, "127.0.0.1");
 
         String description = "Test description name";
         Date date = getDate(3, 3, 2020, 11, 30);
@@ -30,11 +30,9 @@ public class AuctionMechanismTest extends TestCase {
 
         AuctionBuyItNow("Test Auction 3 name");
         BuyAuctionWithNoOption("Test Auction name No Option");
-
         CheckAuctionNoBids("Test Auction name No Option");
-        CheckAuctionDeleted("Test Auction 3 name");
+        CheckAuctionWon("Test Auction 3 name");
         PlaceBid("Test Auction name No Option");
-
 
         DeleteAuction("Test Auction name");
         DeleteInexistentAuction("Test Auction 2 name");
@@ -45,29 +43,29 @@ public class AuctionMechanismTest extends TestCase {
      * Creazione asta senza opzione "Compralo Subito"
      **/
     public void CreateAuction(String _auction_name, Date _end_time, double _reserved_price, String _description) {
-        assertTrue(peer0.createAuction(_auction_name, _end_time, _reserved_price, _description)); //true
-        assertFalse(peer0.createAuction(_auction_name, _end_time, _reserved_price, _description)); //already exists = false
+        Assert.assertTrue(peer0.createAuction(_auction_name, _end_time, _reserved_price, _description)); //true
+        Assert.assertFalse(peer0.createAuction(_auction_name, _end_time, _reserved_price, _description)); //already exists = false
     }
 
     /**
      * Creazione asta con prezzo di partenza <=0
      **/
     public void CreateAuctionWrongPrice(String _auction_name, Date _end_time, double _reserved_price, String _description) {
-        assertFalse(peer1.createAuction(_auction_name, _end_time, _reserved_price, _description)); //wrong price = false
+        Assert.assertFalse(peer1.createAuction(_auction_name, _end_time, _reserved_price, _description)); //wrong price = false
     }
 
     /**
      * Creazione asta con opzione "Compralo Subito"
      **/
     public void CreateAuctionWithOption(String _auction_name, Date _end_time, double _reserved_price, String _description, double _buyNowPrice) {
-        assertTrue(peer2.createAuctionWithBuyNowOption(_auction_name, _end_time, _reserved_price, _description, _buyNowPrice)); //true
+        Assert.assertTrue(peer2.createAuctionWithBuyNowOption(_auction_name, _end_time, _reserved_price, _description, _buyNowPrice)); //true
     }
 
     /**
      * Creazione asta con opzione "Compralo Subito" ma con prezzo compralo subito inferiore a quello di partenza asta
      **/
     public void CreateAuctionWithOptionWrongPrice(String _auction_name, Date _end_time, double _reserved_price, String _description, double _buyNowPrice) {
-        assertFalse(peer3.createAuctionWithBuyNowOption(_auction_name, _end_time, _reserved_price, _description, _buyNowPrice)); //true
+        Assert.assertFalse(peer3.createAuctionWithBuyNowOption(_auction_name, _end_time, _reserved_price, _description, _buyNowPrice)); //true
     }
 
     /**
@@ -92,14 +90,14 @@ public class AuctionMechanismTest extends TestCase {
      * Un peer controlla un asta.
      **/
     public void CheckAuctionNoBids(String _auction_name) {
-        assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 10."));
+        assertThat(peer1.checkAuction(_auction_name), containsString("Starting bid: 10."));
     }
 
     /**
-     * Un peer controlla un asta non esistente
+     * Un peer controlla un asta terminata.
      **/
-    public void CheckAuctionDeleted(String _auction_name) {
-        assertThat(peer0.checkAuction(_auction_name), containsString("This auction ended. Check its status."));
+    public void CheckAuctionWon(String _auction_name) {
+        assertThat(peer0.checkAuction(_auction_name), containsString("This auction ended. Winning price: 200.0."));
     }
 
     /**
@@ -118,21 +116,21 @@ public class AuctionMechanismTest extends TestCase {
      * Cancellazione asta
      **/
     public void DeleteAuction(String _auction_name) {
-        assertTrue(peer0.deleteAuction(_auction_name)); //true
+        Assert.assertTrue(peer0.deleteAuction(_auction_name)); //true
     }
 
     /**
      * Cancellazione asta che non esiste
      **/
     public void DeleteInexistentAuction(String _auction_name) {
-        assertFalse(peer3.deleteAuction(_auction_name)); //false the auction doesn't exist
+        Assert.assertFalse(peer3.deleteAuction(_auction_name)); //false the auction doesn't exist
     }
 
     /**
      * Cancellazione asta non del creatore
      **/
     public void DeleteAuctionNotOwned(String _auction_name) {
-        assertFalse(peer1.deleteAuction(_auction_name)); //false the owner is peer 2 not peer 1
+        Assert.assertFalse(peer1.deleteAuction(_auction_name)); //false the owner is peer 2 not peer 1
 
     }
 
