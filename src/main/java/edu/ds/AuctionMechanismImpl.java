@@ -12,6 +12,7 @@ import net.tomp2p.storage.Data;
 
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AuctionMechanismImpl implements AuctionMechanism {
@@ -37,7 +38,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
 
     public boolean createAuction(String _auction_name, Date _end_time, double _reserved_price, String _description) {
         try {
-            if (_reserved_price <= 0 || _end_time.before(new Date())) return false;
+            if (_reserved_price <= 0 || _end_time.before(Calendar.getInstance().getTime())) return false;
             FutureGet futureGet = dht.get(Number160.createHash(_auction_name)).start();
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
@@ -52,7 +53,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
 
     public boolean createAuctionWithBuyNowOption(String _auction_name, Date _end_time, double _reserved_price, String _description, double _buyNowPrice) {
         try {
-            if (_reserved_price <= 0 || _end_time.before(new Date()) || _buyNowPrice <= _reserved_price) return false;
+            if (_reserved_price <= 0 || _end_time.before(Calendar.getInstance().getTime()) || _buyNowPrice <= _reserved_price) return false;
             FutureGet futureGet = dht.get(Number160.createHash(_auction_name)).start();
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
@@ -73,7 +74,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                 if (futureGet.isEmpty()) return "This auction does not exist.";
                 String status = "";
                 Auction auction = (Auction) futureGet.dataMap().values().iterator().next().object();
-                if (auction.getEndTime().before(new Date())) {
+                if (auction.getEndTime().before(Calendar.getInstance().getTime())) {
                     //status += "This auction ended. Winning price: " + auction.getReservePrice() + ".";
                     if (!auction.isEndBuyItNow())
                         status += "This auction ended. Winning price: " + auction.getLastReservePrice() + ".";
@@ -113,7 +114,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
             if (futureGet.isSuccess()) {
                 if (futureGet.isEmpty()) return "This auction does not exist";
                 Auction auction = (Auction) futureGet.dataMap().values().iterator().next().object();
-                if (auction.getEndTime().before(new Date())) {
+                if (auction.getEndTime().before(Calendar.getInstance().getTime())) {
                     return "This auction ended. Check its status.";
                 } else {
                     if (auction.getOwner().equals(ID))
@@ -147,7 +148,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
             if (futureGet.isSuccess()) {
                 if (futureGet.isEmpty()) return "This auction does not exist";
                 Auction auction = (Auction) futureGet.dataMap().values().iterator().next().object();
-                if (auction.getEndTime().before(new Date()))
+                if (auction.getEndTime().before(Calendar.getInstance().getTime()))
                     return "This auction ended. Check its status.";
                 if (auction.isBuyItNow()) {
                     if (auction.getOwner().equals(ID))
@@ -177,8 +178,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                 if (futureGet.isEmpty()) return false;
                 Auction auction = (Auction) futureGet.dataMap().values().iterator().next().object();
                 if (!auction.getOwner().equals(ID)) return false;
-                if (auction.getEndTime().before(new Date()))
-                    if (auction.getIDBestBidder() != null) return false;
+                if (auction.getIDBestBidder() != null) return false;
                 return dht.remove(Number160.createHash(_auction_name)).start().awaitUninterruptibly().isSuccess();
             }
 
