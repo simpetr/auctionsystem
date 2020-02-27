@@ -121,7 +121,7 @@ public class AuctionMechanismTest {
         assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 30.1"));
         assertThat(peer3.placeAbid(_auction_name, 55), containsString("BID PLACED: 55"));
         assertThat(peer2.placeAbid(_auction_name, 50), containsString("You didn't exceed the reserve price."));
-        assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 55.1"));
+        assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 50.1"));
     }
 
     /**
