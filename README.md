@@ -28,7 +28,7 @@ The package ```src/tes/java``` provides one JUnit class:
 
 - AuctionMechanismTest, a Junit class with different test cases.
 
-*NOTE* While doing test be aware of docker timezone
+*NOTE* While doing tests through terminal be aware of date timezone.
 
 ### Build app in a Docker container
 
