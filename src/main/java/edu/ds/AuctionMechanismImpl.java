@@ -11,7 +11,6 @@ import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.storage.Data;
 
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
