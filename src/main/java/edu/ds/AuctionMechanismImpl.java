@@ -74,15 +74,21 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                 String status = "";
                 Auction auction = (Auction) futureGet.dataMap().values().iterator().next().object();
                 if (auction.getEndTime().before(new Date())) {
-                    status += "This auction ended. Winning price: " + auction.getReservePrice() + ".";
+                    //status += "This auction ended. Winning price: " + auction.getReservePrice() + ".";
+                    if (!auction.isEndBuyItNow())
+                        status += "This auction ended. Winning price: " + auction.getLastReservePrice() + ".";
+                    else
+                        status += "This auction ended. Winning price: " + auction.getReservePrice() + ".";
                     if (auction.getIDBestBidder() == ID)
                         status += "You are the winner.";
                 } else {
-                    if (auction.getIDBestBidder() == ID)
-                        status += "You are the best binder: " + auction.getReservePrice();
-                    else {
+                    if (auction.getIDBestBidder()==ID) {
+                        //status += "You are the best binder: " + auction.getReservePrice();
+                        status += "You are the best binder, reserve price: " + auction.getReservePrice();
+                        status += " current bid: " + auction.getLastReservePrice();
+                    } else {
                         if (auction.getIDBestBidder() != null)
-                            status += "Current bid: " + auction.getReservePrice() + ".";
+                            status += "Current bid: " + auction.getLastReservePrice() + ".";
                         else
                             status += "Starting bid: " + auction.getReservePrice() + ".";
                     }
@@ -116,10 +122,17 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                         return "You cannot place bids at your own auction.";
                     else if (auction.getIDBestBidder() == ID)
                         return "You have already placed the best bid: " + auction.getReservePrice();
-                    else if (auction.getReservePrice() >= _bid_amount)
-                        return "Your bid must be higher than " + auction.getReservePrice();
-                    else {
+                    else if (auction.getReservePrice() >= _bid_amount) {
+                        if (auction.getLastReservePrice() < _bid_amount) {
+                            auction.incrementLastReservePrice(_bid_amount - auction.getLastReservePrice() + auction.getIncrement());
+                            dht.put(Number160.createHash(_auction_name)).data(new Data(auction)).start().awaitUninterruptibly();
+                            return "You didn't exceed the reserve price.";
+                        }
+                        return "Your bid must be higher";
+                        //return "Your bid must be higher than " + auction.getReservePrice();
+                    } else {
                         auction.setReservePrice(_bid_amount);
+                        auction.setLastReservePrice(auction.getLastReservePrice());
                         auction.setIDBestBidder(ID);
                         dht.put(Number160.createHash(_auction_name)).data(new Data(auction)).start().awaitUninterruptibly();
                         return "BID PLACED: " + _bid_amount;
@@ -145,6 +158,7 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                     if (auction.getOwner().equals(ID))
                         return "You cannot buy your own stuff.";
                     auction.setReservePrice(auction.getBuyItNowPrice());
+                    auction.setEndBuyItNow(true);
                     auction.setIDBestBidder(ID);
                     auction.setEndTime(new Date());
                     dht.put(Number160.createHash(_auction_name)).data(new Data(auction)).start().awaitUninterruptibly();

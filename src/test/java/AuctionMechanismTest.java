@@ -32,7 +32,8 @@ public class AuctionMechanismTest {
         BuyAuctionWithNoOption("Test Auction name No Option");
         CheckAuctionNoBids("Test Auction name No Option");
         CheckAuctionWon("Test Auction 3 name");
-        PlaceBid("Test Auction name No Option");
+        PlaceBidAndCheck("Test Auction name No Option");
+
 
         DeleteAuction("Test Auction name");
         DeleteInexistentAuction("Test Auction 2 name");
@@ -102,15 +103,26 @@ public class AuctionMechanismTest {
 
     /**
      * Un peer prova ad offrire alla propria asta
-     * Un peer offre 45
-     * Un peer prova ad offrire una cifra minore del necessario
+     * Un peer offre 45, che diventa prezzo di riserva
+     * Un peer prova ad offrire meno del minimo da offrire
+     * Un peer prova ad offrire una cifra corretta ma il prezzo di riserva di un altro utente è maggiore.
+     * Un peer prova ad offrire una cifra corretta ma il prezzo di riserva di un altro utente è maggiore.
+     * Un peer controlla quanto è il minimo da offrire
+     * Un peer offre piu del prezzo di riserva
+     * Un peer prova ad offrire una cifra corretta ma il prezzo di riserva di un altro utente è maggiore.
+     * Un peer controlla quanto è il minimo da offrire
      **/
-    public void PlaceBid(String _auction_name) {
+    public void PlaceBidAndCheck(String _auction_name) {
         assertThat(peer0.placeAbid(_auction_name, 30), containsString("You cannot place bids at your own auction."));
         assertThat(peer2.placeAbid(_auction_name, 45), containsString("BID PLACED: 45"));
-        assertThat(peer3.placeAbid(_auction_name, 25), containsString("Your bid must be higher than 45"));
+        assertThat(peer3.placeAbid(_auction_name, 10), containsString("Your bid must be higher"));
+        assertThat(peer3.placeAbid(_auction_name, 20), containsString("You didn't exceed the reserve price."));
+        assertThat(peer3.placeAbid(_auction_name, 30), containsString("You didn't exceed the reserve price."));
+        assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 30.1"));
+        assertThat(peer3.placeAbid(_auction_name, 55), containsString("BID PLACED: 55"));
+        assertThat(peer2.placeAbid(_auction_name, 50), containsString("You didn't exceed the reserve price."));
+        assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 55.1"));
     }
-
 
     /**
      * Cancellazione asta
