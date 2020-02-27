@@ -52,7 +52,7 @@ public class Terminal {
                         Calendar cal = Calendar.getInstance();
                         try {
                             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitDate[0]));
-                            cal.set(Calendar.MONTH, Integer.parseInt(splitDate[1]));
+                            cal.set(Calendar.MONTH, Integer.parseInt(splitDate[1])-1);
                             cal.set(Calendar.YEAR, Integer.parseInt(splitDate[2]));
                             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(splitDate[3]));
                             cal.set(Calendar.MINUTE, Integer.parseInt(splitDate[4]));
@@ -84,7 +84,7 @@ public class Terminal {
                         Calendar cal2 = Calendar.getInstance();
                         try {
                             cal2.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitDate2[0]));
-                            cal2.set(Calendar.MONTH, Integer.parseInt(splitDate2[1]));
+                            cal2.set(Calendar.MONTH, Integer.parseInt(splitDate2[1])-1);
                             cal2.set(Calendar.YEAR, Integer.parseInt(splitDate2[2]));
                             cal2.set(Calendar.HOUR_OF_DAY, Integer.parseInt(splitDate2[3]));
                             cal2.set(Calendar.MINUTE, Integer.parseInt(splitDate2[4]));
@@ -94,7 +94,6 @@ public class Terminal {
                         }
                         terminal.println("\nEnter starting price.");
                         price = textIO.newDoubleInputReader().read("Price: ");
-                        terminal.println("\nEnter description.");
                         terminal.println("\nEnter Buy It Now price.");
                         double binprice = textIO.newDoubleInputReader().read("Buy it now price: ");
                         terminal.println("\nEnter description.");

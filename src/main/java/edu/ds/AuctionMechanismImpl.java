@@ -92,10 +92,10 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                         else
                             status += "Starting bid: " + auction.getReservePrice() + ".";
                     }
-                    SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY HH:mm");
+                   // SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY HH:mm");
                     if (auction.isBuyItNow())
                         status += "\nAuction has But It Now option. Price: " + auction.getBuyItNowPrice();
-                    status += "\nAuction end: " + sdf.format(auction.getEndTime()) + ".";
+                    status += "\nAuction end: " + auction.getEndTime() + ".";
                     status += "\nAuction description: " + auction.getDescription() + ".";
 
                 }

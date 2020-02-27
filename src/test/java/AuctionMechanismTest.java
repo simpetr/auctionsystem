@@ -20,18 +20,19 @@ public class AuctionMechanismTest {
         peer3 = new AuctionMechanismImpl(3, "127.0.0.1");
 
         String description = "Test description name";
-        Date date = getDate(3, 3, 2020, 11, 30);
+        Calendar cal = Calendar.getInstance();
+        cal.set(2020,2,3,11,30,0);
 
-        CreateAuction("Test Auction name", date, 5, description);
-        CreateAuction("Test Auction name No Option", date, 10, description);
-        CreateAuctionWrongPrice("Test Auction 2 name", date, 0, description);
-        CreateAuctionWithOption("Test Auction 3 name", date, 20, description, 200);
-        CreateAuctionWithOptionWrongPrice("Test Auction 4 name", date, 150, description, 50);
+        CreateAuction("Test Auction name", cal.getTime(), 5, description);
+        CreateAuction("Test Auction name No Option", cal.getTime(), 10, description);
+        CreateAuctionWrongPrice("Test Auction 2 name", cal.getTime(), 0, description);
+        CreateAuctionWithOption("Test Auction 3 name", cal.getTime(), 20, description, 200);
+        CreateAuctionWithOptionWrongPrice("Test Auction 4 name", cal.getTime(), 150, description, 50);
 
         AuctionBuyItNow("Test Auction 3 name");
         BuyAuctionWithNoOption("Test Auction name No Option");
         CheckAuctionNoBids("Test Auction name No Option");
-        CheckAuctionWon("Test Auction 3 name");
+        CheckEndedAuction("Test Auction 3 name");
         PlaceBidAndCheck("Test Auction name No Option");
 
 
@@ -96,9 +97,11 @@ public class AuctionMechanismTest {
 
     /**
      * Un peer controlla un asta terminata.
+     * Un peer prova ad offrire ad un asta terminata
      **/
-    public void CheckAuctionWon(String _auction_name) {
+    public void CheckEndedAuction(String _auction_name) {
         assertThat(peer0.checkAuction(_auction_name), containsString("This auction ended. Winning price: 200.0."));
+        assertThat(peer1.placeAbid(_auction_name, 45), containsString("This auction ended. Check its status."));
     }
 
     /**
