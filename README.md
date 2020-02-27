@@ -49,7 +49,8 @@ When master is started check the ip address of your container:
 
 Now you can start your peers varying the unique peer "id":  
 ```docker run -i --name PEER-<id> -e MASTERIP=<IP ADDRESS> -e ID=<id> auction_system```
-for example
+
+Example:
 ```docker run -i --name PEER-1 -e MASTERIP="172.17.0.2" -e ID=1 auction_system```
 
 ### Technologies
