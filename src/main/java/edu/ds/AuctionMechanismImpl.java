@@ -79,20 +79,18 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                         status += "This auction ended. Winning price: " + auction.getLastReservePrice() + ".";
                     else
                         status += "This auction ended. Winning price: " + auction.getReservePrice() + ".";
-                    if (auction.getIDBestBidder() == ID)
+                    if (auction.getIDBestBidder().equals(ID))
                         status += "You are the winner.";
                 } else {
-                    if (auction.getIDBestBidder()==ID) {
-                        //status += "You are the best binder: " + auction.getReservePrice();
-                        status += "You are the best binder, reserve price: " + auction.getReservePrice();
-                        status += " current bid: " + auction.getLastReservePrice();
-                    } else {
-                        if (auction.getIDBestBidder() != null)
-                            status += "Current bid: " + auction.getLastReservePrice() + ".";
-                        else
-                            status += "Starting bid: " + auction.getReservePrice() + ".";
+                    if(auction.getIDBestBidder()==null)
+                        status += "Starting bid: " + auction.getReservePrice() + ".";
+                    else{
+                        if(auction.getIDBestBidder().equals(ID)){
+                            status += "You are the best binder, reserve price: " + auction.getReservePrice()+". ";
+
+                        }
+                        status += "Current bid: " + auction.getLastReservePrice();
                     }
-                   // SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY HH:mm");
                     if (auction.isBuyItNow())
                         status += "\nAuction has But It Now option. Price: " + auction.getBuyItNowPrice();
                     status += "\nAuction end: " + auction.getEndTime() + ".";
@@ -120,8 +118,6 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                 } else {
                     if (auction.getOwner().equals(ID))
                         return "You cannot place bids at your own auction.";
-                    else if (auction.getIDBestBidder() == ID)
-                        return "You have already placed the best bid: " + auction.getReservePrice();
                     else if (auction.getReservePrice() >= _bid_amount) {
                         if (auction.getLastReservePrice() < _bid_amount) {
                             auction.incrementLastReservePrice(_bid_amount - auction.getLastReservePrice() + auction.getIncrement());
@@ -129,7 +125,6 @@ public class AuctionMechanismImpl implements AuctionMechanism {
                             return "You didn't exceed the reserve price.";
                         }
                         return "Your bid must be higher";
-                        //return "Your bid must be higher than " + auction.getReservePrice();
                     } else {
                         auction.setReservePrice(_bid_amount);
                         auction.setLastReservePrice(auction.getLastReservePrice());

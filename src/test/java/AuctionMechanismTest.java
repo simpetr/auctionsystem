@@ -114,6 +114,7 @@ public class AuctionMechanismTest {
      * Un peer offre piu del prezzo di riserva
      * Un peer prova ad offrire una cifra corretta ma il prezzo di riserva di un altro utente è maggiore.
      * Un peer controlla quanto è il minimo da offrire
+     * Un peer controll se è il miglior binder (attulmente)
      **/
     public void PlaceBidAndCheck(String _auction_name) {
         assertThat(peer0.placeAbid(_auction_name, 30), containsString("You cannot place bids at your own auction."));
@@ -125,6 +126,7 @@ public class AuctionMechanismTest {
         assertThat(peer3.placeAbid(_auction_name, 55), containsString("BID PLACED: 55"));
         assertThat(peer2.placeAbid(_auction_name, 50), containsString("You didn't exceed the reserve price."));
         assertThat(peer1.checkAuction(_auction_name), containsString("Current bid: 50.1"));
+        assertThat(peer3.checkAuction(_auction_name), containsString("You are the best binder"));
     }
 
     /**
