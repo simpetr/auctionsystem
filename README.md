@@ -28,15 +28,17 @@ The package ```src/tes/java``` provides one JUnit class:
 
 - AuctionMechanismTest, a Junit class with different test cases.
 
+*NOTE* While doing test be aware of docker timezone
+
 ### Build app in a Docker container
 
 Build your docker container:  
-```docker build --no-cache -t auction_system```
+```docker build --no-cache -t auctionsystem .```
 
 #### Start the master peer
 
 Start the master peer, in interactive mode (-i) and with two (-e) environment variables:  
-```docker run -i --name MASTER-PEER -e MASTERIP="127.0.0.1" -e ID=0 auction_system```
+```docker run -i --name MASTER-PEER -e MASTERIP="127.0.0.1" -e ID=0 auctionsystem```
 
 ,the MASTERIP envirnoment variable is the master peer ip address and the ID environment variable is the unique id of your peer. Rember you have to run the master peer using the ID=0.
 
@@ -48,11 +50,12 @@ When master is started check the ip address of your container:
 - Check the IP address: ```docker inspect <container ID>```
 
 Now you can start your peers varying the unique peer "id":  
-```docker run -i --name PEER-<id> -e MASTERIP=<IP ADDRESS> -e ID=<id> auction_system```
+```docker run -i --name PEER-<id> -e MASTERIP=<IP ADDRESS> -e ID=<id> auctionsystem```
 
 Example:
 
-```docker run -i --name PEER-1 -e MASTERIP="172.17.0.2" -e ID=1 auction_system```
+```docker run -i --name PEER-1 -e MASTERIP="172.17.0.2" -e ID=1 auctionsystem```
+
 
 ### Technologies
 
